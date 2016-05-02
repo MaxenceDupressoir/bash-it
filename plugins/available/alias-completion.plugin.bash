@@ -22,14 +22,14 @@ function alias_completion {
     local alias_regex="alias ([^=]+)='(\"[^\"]+\"|[^ ]+)(( +[^ ]+)*)'"
 
     # create array of function completion triggers, keeping multi-word triggers together
-    eval "local completions=($(complete -p | sed -Ene "/$compl_regex/s//'\3'/p"))"
+    eval "local completions=($(complete -p | sed -rne "/$compl_regex/s//'\3'/p"))"
     (( ${#completions[@]} == 0 )) && return 0
 
     # create temporary file for wrapper functions and completions
     rm -f "/tmp/${namespace}-*.tmp" # preliminary cleanup
     local tmp_file; tmp_file="$(mktemp "/tmp/${namespace}-${RANDOM}XXX.tmp")" || return 1
 
-    local completion_loader; completion_loader="$(complete -p -D 2>/dev/null | sed -Ene 's/.* -F ([^ ]*).*/\1/p')"
+    local completion_loader; completion_loader="$(complete -p -D 2>/dev/null | sed -rne 's/.* -F ([^ ]*).*/\1/p')"
 
     # read in "<alias> '<aliased command>' '<command args>'" lines from defined aliases
     local line; while read line; do
@@ -77,6 +77,6 @@ function alias_completion {
         # replace completion trigger by alias
         new_completion="${new_completion% *} $alias_name"
         echo "$new_completion" >> "$tmp_file"
-    done < <(alias -p | sed -Ene "s/$alias_regex/\1 '\2' '\3'/p")
+    done < <(alias -p | sed -rne "s/$alias_regex/\1 '\2' '\3'/p")
     source "$tmp_file" && rm -f "$tmp_file"
 }; alias_completion

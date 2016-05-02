@@ -20,7 +20,7 @@ _replace_by_history() {
     else
         alias _tac="tail -r"
     fi
-    local l=$(HISTTIMEFORMAT= history | _tac | sed -e 's/^\ *[0-9]*\ *//' | percol --query "$READLINE_LINE")
+    local l=$(HISTTIMEFORMAT= history | _tac | sed -r 's/^\ *[0-9]*\ *//' | percol --query "$READLINE_LINE")
     READLINE_LINE="$l"
     READLINE_POINT=${#l}
 }

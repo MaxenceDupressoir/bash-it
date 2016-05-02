@@ -36,7 +36,7 @@ parse_git_dirty () {
   [[ $(git status 2> /dev/null | tail -n1 | cut -c 1-17) != "nothing to commit" ]] && echo "*"
 }
 parse_git_branch () {
-  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
+  git branch --no-color 2> /dev/null | sed -r '/^[^*]/d' -r "s/* \(.*\)/\1$(parse_git_dirty)/"
 }
 
 function prompt_command() {

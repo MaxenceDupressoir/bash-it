@@ -386,7 +386,7 @@ __git_refs ()
 	*)
 		echo "HEAD"
 		git for-each-ref --format="%(refname:short)" -- \
-			"refs/remotes/$dir/" 2>/dev/null | sed -e "s#^$dir/##"
+			"refs/remotes/$dir/" 2>/dev/null | sed -r "s#^$dir/##"
 		;;
 	esac
 }
@@ -420,7 +420,7 @@ __git_remotes ()
 __git_list_merge_strategies ()
 {
 	git merge -s help 2>&1 |
-	sed -n -e '/[Aa]vailable strategies are: /,/^$/{
+	sed -n -r '/[Aa]vailable strategies are: /,/^$/{
 		s/\.$//
 		s/.*://
 		s/^[ 	]*//
@@ -2419,12 +2419,12 @@ _git_stash ()
 				__gitcomp_nl "$(__git_refs)";
 			else
 				__gitcomp_nl "$(git --git-dir="$(__gitdir)" stash list \
-						| sed -n -e 's/:.*//p')"
+						| sed -n -r 's/:.*//p')"
 			fi
 			;;
 		show,*|apply,*|drop,*|pop,*)
 			__gitcomp_nl "$(git --git-dir="$(__gitdir)" stash list \
-					| sed -n -e 's/:.*//p')"
+					| sed -n -r 's/:.*//p')"
 			;;
 		*)
 			;;

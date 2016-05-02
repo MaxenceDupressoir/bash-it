@@ -6,7 +6,7 @@ _dirs-complete() {
 
     # parse all defined shortcuts from ~/.dirs
     if [ -r "$HOME/.dirs" ]; then
-        COMPREPLY=($(compgen -W "$(grep -v '^#' ~/.dirs | sed -e 's/\(.*\)=.*/\1/')" -- ${CURRENT_PROMPT}) )
+        COMPREPLY=($(compgen -W "$(grep -v '^#' ~/.dirs | sed -r 's/\(.*\)=.*/\1/')" -- ${CURRENT_PROMPT}) )
     fi
 
     return 0

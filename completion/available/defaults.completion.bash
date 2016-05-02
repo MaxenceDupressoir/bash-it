@@ -13,7 +13,7 @@ _defaults_domains()
     COMPREPLY=()
     cur=${COMP_WORDS[COMP_CWORD]}
 
-	local domains=$( defaults domains | sed -e 's/, /:/g' | tr : '\n' | sed -e 's/ /\\ /g' | grep -i "^$cur" )
+	local domains=$( defaults domains | sed -r 's/, /:/g' | tr : '\n' | sed -r 's/ /\\ /g' | grep -i "^$cur" )
 	local IFS=$'\n'
 	COMPREPLY=( $domains )
 	if [[ $( echo '-app' | grep "^$cur" ) ]]; then
@@ -94,7 +94,7 @@ _defaults()
 		fi
 	fi
 
-	keys=$( defaults read $domain 2>/dev/null | sed -n -e '/^    [^}) ]/p' | sed -e 's/^    \([^" ]\{1,\}\) = .*$/\1/g' -e 's/^    "\([^"]\{1,\}\)" = .*$/\1/g' | sed -e 's/ /\\ /g' )
+	keys=$( defaults read $domain 2>/dev/null | sed -n -r '/^    [^}) ]/p' | sed -r 's/^    \([^" ]\{1,\}\) = .*$/\1/g' -e 's/^    "\([^"]\{1,\}\)" = .*$/\1/g' | sed -r 's/ /\\ /g' )
 
 	case $cmd in
 	read|read-type)

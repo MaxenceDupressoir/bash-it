@@ -392,10 +392,10 @@ replaceOrPrepend()
   cleaninput "for sed"
 
   # Retrieve existing priority and prepended date
-  priority=$(sed -e "$item!d" -e $item's/^\((.) \)\{0,1\}\([0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2\} \)\{0,1\}.*/\1/' "$TODO_FILE")
-  prepdate=$(sed -e "$item!d" -e $item's/^\((.) \)\{0,1\}\([0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2\} \)\{0,1\}.*/\2/' "$TODO_FILE")
+  priority=$(sed -r "$item!d" -r $item's/^\((.) \)\{0,1\}\([0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2\} \)\{0,1\}.*/\1/' "$TODO_FILE")
+  prepdate=$(sed -r "$item!d" -r $item's/^\((.) \)\{0,1\}\([0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2\} \)\{0,1\}.*/\2/' "$TODO_FILE")
 
-  if [ "$prepdate" -a "$action" = "replace" ] && [ "$(echo "$input"|sed -e 's/^\([0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2\}\)\{0,1\}.*/\1/')" ]; then
+  if [ "$prepdate" -a "$action" = "replace" ] && [ "$(echo "$input"|sed -r 's/^\([0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2\}\)\{0,1\}.*/\1/')" ]; then
     # If the replaced text starts with a date, it will replace the existing
     # date, too.
     prepdate=
@@ -404,7 +404,7 @@ replaceOrPrepend()
   # Temporarily remove any existing priority and prepended date, perform the
   # change (replace/prepend) and re-insert the existing priority and prepended
   # date again.
-  sed -i.bak -e "$item s/^${priority}${prepdate}//" -e "$item s|^.*|${priority}${prepdate}${input}${backref}|" "$TODO_FILE"
+  sed -i.bak -r "$item s/^${priority}${prepdate}//" -r "$item s|^.*|${priority}${prepdate}${input}${backref}|" "$TODO_FILE"
   if [ $TODOTXT_VERBOSE -gt 0 ]; then
     getNewtodo "$item"
     case "$action" in
@@ -690,7 +690,7 @@ _addto() {
 
     if [[ $TODOTXT_DATE_ON_ADD = 1 ]]; then
         now=$(date '+%Y-%m-%d')
-        input=$(echo "$input" | sed -e 's/^\(([A-Z]) \)\{0,1\}/\1'"$now /")
+        input=$(echo "$input" | sed -r 's/^\(([A-Z]) \)\{0,1\}/\1'"$now /")
     fi
     echo "$input" >> "$file"
     if [ $TODOTXT_VERBOSE -gt 0 ]; then
@@ -797,7 +797,7 @@ _format()
         else
             sed =
         fi                                                      \
-        | sed -e '''
+        | sed -r '''
             N
             s/^/     /
             s/ *\([ 0-9]\{'"$PADDING"',\}\)\n/\1 /
@@ -959,7 +959,7 @@ case $action in
 
 "archive" )
     # defragment blank lines
-    sed -i.bak -e '/./!d' "$TODO_FILE"
+    sed -i.bak -r '/./!d' "$TODO_FILE"
     [ $TODOTXT_VERBOSE -gt 0 ] && grep "^x " "$TODO_FILE"
     grep "^x " "$TODO_FILE" >> "$DONE_FILE"
     sed -i.bak '/^x /d' "$TODO_FILE"
@@ -984,10 +984,10 @@ case $action in
         if [ "$ANSWER" = "y" ]; then
             if [ $TODOTXT_PRESERVE_LINE_NUMBERS = 0 ]; then
                 # delete line (changes line numbers)
-                sed -i.bak -e $item"s/^.*//" -e '/./!d' "$TODO_FILE"
+                sed -i.bak -r $item"s/^.*//" -r '/./!d' "$TODO_FILE"
             else
                 # leave blank line behind (preserves line numbers)
-                sed -i.bak -e $item"s/^.*//" "$TODO_FILE"
+                sed -i.bak -r $item"s/^.*//" "$TODO_FILE"
             fi
             if [ $TODOTXT_VERBOSE -gt 0 ]; then
                 echo "$item $todo"
@@ -998,11 +998,11 @@ case $action in
         fi
     else
         sed -i.bak \
-            -e $item"s/^\((.) \)\{0,1\} *$3 */\1/g" \
-            -e $item"s/ *$3 *\$//g" \
-            -e $item"s/  *$3 */ /g" \
-            -e $item"s/ *$3  */ /g" \
-            -e $item"s/$3//g" \
+            -r $item"s/^\((.) \)\{0,1\} *$3 */\1/g" \
+            -r $item"s/ *$3 *\$//g" \
+            -r $item"s/  *$3 */ /g" \
+            -r $item"s/ *$3  */ /g" \
+            -r $item"s/$3//g" \
             "$TODO_FILE"
         getNewtodo "$item"
         if [ "$todo" = "$newtodo" ]; then
@@ -1028,7 +1028,7 @@ case $action in
         getTodo "$item"
 
 	if [[ "$todo" = \(?\)\ * ]]; then
-	    sed -i.bak -e $item"s/^(.) //" "$TODO_FILE"
+	    sed -i.bak -r $item"s/^(.) //" "$TODO_FILE"
 	    if [ $TODOTXT_VERBOSE -gt 0 ]; then
 		getNewtodo "$item"
 		echo "$item $newtodo"
@@ -1177,10 +1177,10 @@ case $action in
     if [ "$ANSWER" = "y" ]; then
         if [ $TODOTXT_PRESERVE_LINE_NUMBERS = 0 ]; then
             # delete line (changes line numbers)
-            sed -i.bak -e $item"s/^.*//" -e '/./!d' "$src"
+            sed -i.bak -r $item"s/^.*//" -r '/./!d' "$src"
         else
             # leave blank line behind (preserves line numbers)
-            sed -i.bak -e $item"s/^.*//" "$src"
+            sed -i.bak -r $item"s/^.*//" "$src"
         fi
         echo "$todo" >> "$dest"
 
@@ -1215,7 +1215,7 @@ note: PRIORITY must be anywhere from A to Z."
     fi
 
     if [ "$oldpri" != "$newpri" ]; then
-        sed -i.bak -e $item"s/^(.) //" -e $item"s/^/($newpri) /" "$TODO_FILE"
+        sed -i.bak -r $item"s/^(.) //" -r $item"s/^/($newpri) /" "$TODO_FILE"
     fi
     if [ $TODOTXT_VERBOSE -gt 0 ]; then
         getNewtodo "$item"
@@ -1269,7 +1269,7 @@ note: PRIORITY must be anywhere from A to Z."
 
     # To determine the difference when deduplicated lines are preserved, only
     # non-empty lines must be counted.
-    originalTaskNum=$( sed -e '/./!d' "$TODO_FILE" | sed -n '$ =' )
+    originalTaskNum=$( sed -r '/./!d' "$TODO_FILE" | sed -n '$ =' )
 
     # Look for duplicate lines and discard the second occurrence.
     # We start with an empty hold space on the first line.  For each line:
@@ -1289,13 +1289,13 @@ note: PRIORITY must be anywhere from A to Z."
     #   P;        - print up to the first newline (that is, the input line)
     #   b         - end processing of the current line
     sed -i.bak -n \
-        -e 'G; s/\n/&&/; /^\([^\n]*\n\).*\n\1/b dedup' \
-        -e 's/\n//; h; P; b' \
-        -e ':dedup' \
-        -e "$deduplicateSedCommand" \
+        -r 'G; s/\n/&&/; /^\([^\n]*\n\).*\n\1/b dedup' \
+        -r 's/\n//; h; P; b' \
+        -r ':dedup' \
+        -r "$deduplicateSedCommand" \
         "$TODO_FILE"
 
-    newTaskNum=$( sed -e '/./!d' "$TODO_FILE" | sed -n '$ =' )
+    newTaskNum=$( sed -r '/./!d' "$TODO_FILE" | sed -n '$ =' )
     deduplicateNum=$(( originalTaskNum - newTaskNum ))
     if [ $deduplicateNum -eq 0 ]; then
         echo "TODO: No duplicate tasks found"

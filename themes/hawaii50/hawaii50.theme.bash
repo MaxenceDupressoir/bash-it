@@ -85,7 +85,7 @@ IP_SEPARATOR=', '
 
 function get_ip_info {
     myip=$(curl -s checkip.dyndns.org | grep -Eo '[0-9\.]+')
-    echo -e "$(ips | sed -e :a -e '$!N;s/\n/${IP_SEPARATOR}/;ta' | sed -e 's/127\.0\.0\.1\${IP_SEPARATOR}//g'), ${myip}"
+    echo -e "$(ips | sed -r :a -r '$!N;s/\n/${IP_SEPARATOR}/;ta' | sed -r 's/127\.0\.0\.1\${IP_SEPARATOR}//g'), ${myip}"
 }
 
 # Displays ip prompt 

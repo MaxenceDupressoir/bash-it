@@ -17,5 +17,5 @@ svn_add(){
     about 'add to svn repo'
     group 'svn'
 
-    svn status | grep '^\?' | sed -e 's/? *//' | sed -e 's/ /\ /g' | xargs svn add
+    svn status | grep '^\?' | sed -r 's/? *//' | sed -r 's/ /\ /g' | xargs svn add
 }

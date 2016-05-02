@@ -107,7 +107,7 @@ bash-it-show-proxy ()
 	echo "============================="
 	echo "(These variables will be used to set the proxy when you call 'enable-proxy')"
 	echo ""
-	env | grep -e "BASH_IT.*PROXY"
+	env | grep -r "BASH_IT.*PROXY"
 }
 
 npm-show-proxy ()
@@ -370,7 +370,7 @@ ssh-disable-proxy ()
 	group 'proxy'
 
 	if [ -f ~/.ssh/config ] ; then
-		sed -e's/^.*ProxyCommand/#	ProxyCommand/' -i ""  ~/.ssh/config
+		sed -r's/^.*ProxyCommand/#	ProxyCommand/' -i ""  ~/.ssh/config
 		echo "Disabled SSH config proxy settings"
 	fi
 }
@@ -382,7 +382,7 @@ ssh-enable-proxy ()
 	group 'proxy'
 
 	if [ -f ~/.ssh/config ] ; then
-		sed -e's/#	ProxyCommand/	ProxyCommand/' -i ""  ~/.ssh/config
+		sed -r's/#	ProxyCommand/	ProxyCommand/' -i ""  ~/.ssh/config
 		echo "Enabled SSH config proxy settings"
 	fi
 }

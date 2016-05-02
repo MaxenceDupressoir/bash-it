@@ -5,7 +5,7 @@ function time-machine-destination() {
   group "osx-timemachine"
   about "Shows the OS X Time Machine destination/mount point"
 
-  echo $(tmutil destinationinfo | grep "Mount Point" | sed -e 's/Mount Point   : \(.*\)/\1/g')
+  echo $(tmutil destinationinfo | grep "Mount Point" | sed -r 's/Mount Point   : \(.*\)/\1/g')
 }
 
 function time-machine-list-machines() {

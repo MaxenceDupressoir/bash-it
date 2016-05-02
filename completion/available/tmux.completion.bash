@@ -136,8 +136,8 @@ function _tmux_complete_window() {
         sessions="${sessions}
 $(tmux -q list-windows -t "${session_name}" 2>/dev/null | sed -re 's/^([^:]+):.*$/'"${session_name}"':\1/')"
     fi
-    cur="$(echo "${cur}" | sed -e 's/:/\\\\:/')"
-    sessions="$(echo "${sessions}" | sed -e 's/:/\\\\:/')"
+    cur="$(echo "${cur}" | sed -r 's/:/\\\\:/')"
+    sessions="$(echo "${sessions}" | sed -r 's/:/\\\\:/')"
     COMPREPLY=( ${COMPREPLY[@]:-} $(compgen -W "${sessions}" -- "${cur}") )
 }
 
